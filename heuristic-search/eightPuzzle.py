@@ -1,5 +1,5 @@
-# Name: Hieu Le - htl5683@truman.edu
-# Name: Anh Nguyen - adn6627@truman.edu
+# Name: Minghao Shan - ms1723@truman.edu
+# Name: Shreeya Rupakheti  - ???????????????????@truman.edu
 
 # File eightPuzzle.py
 # Implements the Eight Puzzle problem for state space search
