@@ -1,20 +1,21 @@
-# Name: Hieu Le - htl5683@truman.edu
-# Name: Anh Nguyen - adn6627@truman.edu
+# Name: Mingao Shan - ms1723@truman.edu
+# Name: Shreeya Rupakheti - ??????????????????????????????????????@truman.edu
 
-# File missionary.py
-# Implements the Missionaries and Cannibals problem for state space search
+# File farmer.py
+# Implements the Farmer problem for state space search
 
 from enum import Enum
 from search import *
 
 
-class MissionaryState(ProblemState):
+class Farmer(ProblemState):
     """
     Each state in the Missionaries and Cannibals problem is characterized by
-    three pieces of information:
-    - Number of missionaries on the left bank
-    - Number of cannibals on the left bank
-    - Position of the boat
+    four pieces of information:
+    - Whether the wolf is on the Point A
+    - Whether the goal is on the Point A
+    - Whether the grain is on the Point A
+    - Position of the wagon
     """
 
     # Total numbers of missionaries and cannibals
@@ -39,6 +40,8 @@ class MissionaryState(ProblemState):
     def illegal(self):
         """Tests whether the state is illegal"""
 
+        # if position is valid : < 0 or > 1
+
         # Check that numbers of missionaries and cannibals are valid
         if not (0 <= self.num_missionaries <= self.GROUP_SIZE
                 and 0 <= self.num_cannibals <= self.GROUP_SIZE):
@@ -49,6 +52,8 @@ class MissionaryState(ProblemState):
         return ((0 < self.num_missionaries < self.num_cannibals)
                 or (0 < self.GROUP_SIZE - self.num_missionaries
                     < self.GROUP_SIZE - self.num_cannibals))
+
+    # METHODS: move wolf, 
 
     def equals(self, state):
         """
@@ -83,12 +88,12 @@ class MissionaryState(ProblemState):
 
         for operator in self.OPERATORS:
             if self.boat_position == self.BoatPosition.LEFT:
-                next_states.append(MissionaryState(
+                next_states.append(Farmer(
                     self.num_missionaries - operator[0],
                     self.num_cannibals - operator[1],
                     self.BoatPosition.RIGHT))
             else:
-                next_states.append(MissionaryState(
+                next_states.append(Farmer(
                     self.num_missionaries + operator[0],
                     self.num_cannibals + operator[1],
                     self.BoatPosition.LEFT))
@@ -96,10 +101,10 @@ class MissionaryState(ProblemState):
         return next_states
 
 
-initialState = MissionaryState(MissionaryState.GROUP_SIZE,
-                               MissionaryState.GROUP_SIZE,
-                               MissionaryState.BoatPosition.LEFT)
+initialState = Farmer(Farmer.GROUP_SIZE,
+                               Farmer.GROUP_SIZE,
+                               Farmer.BoatPosition.LEFT)
 
-goalState = MissionaryState(0, 0, MissionaryState.BoatPosition.RIGHT)
+goalState = Farmer(0, 0, Farmer.BoatPosition.RIGHT)
 
 Search(initialState, goalState)
