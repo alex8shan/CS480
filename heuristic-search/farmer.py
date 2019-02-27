@@ -1,131 +1,145 @@
-# Name: Mingao Shan - ms1723@truman.edu
-# Name: Shreeya Rupakheti - ??????????????????????????????????????@truman.edu
+# Name: Shreeya Rupakheti - sr7172@truman.edu
+# Name: Minghao Shan - ms1723@truman.edu
 
 # File farmer.py
-# Implements the Farmer problem for state space search
+# Implements the Farmer Problem
 
-from enum import Enum
 from search import *
 
-
-class Farmer(ProblemState):
+class FarmerState(ProblemState):
     """
-    Each state in the Missionaries and Cannibals problem is characterized by
-    four pieces of information:
-    - Position of the wolf
-    - Position of the goat
-    - Position of the grain
-    - Position of the farmer
+    1 represent presence of wolf or goat or grain in point A or point B and
+    0 represent absence.
+    The first three 111 represents wolfA, goatA and grain respectively such
+    that two adjacent 11 in both point A or B will be illegal state.
     """
 
-    # Total numbers of missionaries and cannibals
-    GROUP_SIZE = 3
+    def __init__(self, wolfA, goatA, grainA, famer, wolfB, goatB, grainB):
+        self.wolfA = wolfA
+        self.goatA = goatA
+        self.grainA = grainA
+        self.famer = famer
+        self.wolfB = wolfB
+        self.goatB = goatB
+        self.grainB = grainB
 
-    class FarmerPosition(Enum):
-        """Possible positions of the farmer"""
-        POINTA = 0
-        POINTB = 1
-
-    class WolfPosition(Enum):
-        """Possible positions of the wolf"""
-        POINTA = 0
-        POINTB = 1
-
-    class GoatPosition(Enum):
-        """Possible positions of the goat"""
-        POINTA = 0
-        POINTB = 1
-    
-    class GrainPosition(Enum):
-        """Possible positions of the grain"""
-        POINTA = 0
-        POINTB = 1
-    
-    def __init__(self, wolf_position, goat_position, grain_position, farmer_position):
-        self.wolf_position = wolf_position
-        self.goat_position = goat_position
-        self.grain_position = grain_position
-        self.farmer_position = farmer_position
 
     def __str__(self):
-        """Returns a string representation of the state"""
-        return "%s %s %s %s" % (self.wolf_position.name,
-                                self.goat_position.name,
-                                self.grain_position.name,
-                                self.farmer_position.name)
+        """
+        Required method for use with the Search class.
+        Returns a string representation of the state.
+        """
+        return "A: " + str(self.wolfA) + str(self.goatA) + str(self.grainA) \
+            + " (Next move will be from point " + str(self.famer) + ") " + " B: " \
+            + str(self.wolfB) + str(self.goatB) + str(self.grainB)
+
 
     def illegal(self):
-        """Tests whether the state is illegal"""
+        """
+        Required method for use with the Search class.
+        Tests whether the state is illegal.
+        """
+        if self.wolfA < 0 or self.goatA < 0 or self.grainA < 0:
+            return 1
+        if self.wolfA > 1 or self.goatA > 1 or self.grainA > 1:
+            return 1
+        if self.wolfA == 1 and self.goatA == 1 and self.famer == 'B':
+            return 1
+        if self.goatA == 1 and self.grainA == 1 and self.famer == 'B':
+            return 1
+        if self.wolfB == 1 and self.goatB == 1 and self.famer == 'A':
+            return 1
+        if self.goatB == 1 and self.grainB == 1 and self.famer == 'A':
+            return 1
+        if self.wolfB != 1 and self.goatB != 1 and self.grainB != 1 and self.famer != 'B':
+            return 1
+        return 0
 
-        # if position is valid : < 0 or > 1
-
-        # Check that numbers of missionaries and cannibals are valid
-        # if not (0 <= self.num_missionaries <= self.GROUP_SIZE
-        #         and 0 <= self.num_cannibals <= self.GROUP_SIZE):
-        #     return True
-
-        # Check that no group of missionaries in one place is outnumbered by
-        # the cannibals in that place
-        # return ((0 < self.num_missionaries < self.num_cannibals)
-        #         or (0 < self.GROUP_SIZE - self.num_missionaries
-        #             < self.GROUP_SIZE - self.num_cannibals))
-
-    # METHODS: move wolf, 
 
     def equals(self, state):
         """
-        Determines whether the state instance and the given state are equal
+        Required method for use with the Search class.
+        Determines whether the state instance and the given
+        state are equal.
         """
-        # return (self.num_missionaries == state.num_missionaries
-        #         and self.num_cannibals == state.num_cannibals
-        #         and self.farmer_position == state.farmer_position)
+        return self.wolfA == state.wolfA and self.goatA == state.goatA and \
+            self.grainA == state.grainA and self.famer == state.famer and \
+            self.wolfB == state.wolfB and self.goatB == state.goatB and \
+            self.grainB == state.grainB
 
-    # Each operator corresponds to ferrying a group of people from the current
-    # bank to the other bank. This induces a decrease on the numbers of
-    # missionaries and cannibals on current bank.
-    # OPERATORS = [[1, 0], [2, 0], [0, 1], [0, 2], [1, 1]]
+    # move goatA to point B
+
+
+    def moveGoat(self):
+        if self.famer == 'A' and self.goatA == 1:
+            return FarmerState(self.wolfA, self.goatA - 1, self.grainA, 'B',
+                        self.wolfB, self.goatB + 1, self.grainB)
+        else:
+            return FarmerState(self.wolfA, self.goatA + 1, self.grainA, 'A',
+                        self.wolfB, self.goatB - 1, self.grainB)
+
+    # move wolfA to point B
+
+
+    def moveWolf(self):
+        if self.famer == 'A' and self.wolfA == 1:
+            return FarmerState(self.wolfA - 1, self.goatA, self.grainA, 'B',
+                        self.wolfB + 1, self.goatB, self.grainB)
+        else:
+            return FarmerState(self.wolfA + 1, self.goatA, self.grainA, 'A',
+                        self.wolfB - 1, self.goatB, self.grainB)
+
+    # move grain to point B
+
+
+    def moveGrain(self):
+        if self.famer == 'A' and self.grainA == 1:
+            return FarmerState(self.wolfA, self.goatA, self.grainA - 1, 'B',
+                        self.wolfB, self.goatB, self.grainB + 1)
+        else:
+            return FarmerState(self.wolfA, self.goatA, self.grainA + 1, 'A',
+                        self.wolfB, self.goatB, self.grainB - 1)
+
+        # move wolfA or goatA to point B
+
+
+    def moveWolfOrGoat(self):
+        if self.famer == 'A' and self.wolfA == 1 and self.goatA == 0 and self.grainA == 1:
+            return FarmerState(self.wolfA - 1, self.goatA - 1, self.grainA, 'B',
+                        self.wolfB + 1, self.goatB + 1, self.grainB)
+        else:
+            return FarmerState(self.wolfA, self.goatA - 1, self.grainA, 'A',
+                        self.wolfB, self.goatB + 1, self.grainB)
+
+        # move wolfA or grain to point B
+
+
+    def moveWolfOrGrain(self):
+        if self.famer == 'A' and self.wolfA == 0 and self.goatA == 1 and self.grainA == 1:
+            return FarmerState(self.wolfA - 1, self.goatA, self.grainA - 1, 'B',
+                        self.wolfB + 1, self.goatB, self.grainB + 1)
+        else:
+            return FarmerState(self.wolfA - 1, self.goatA, self.grainA, 'A',
+                        self.wolfB + 1, self.goatB, self.grainB)
+
 
     def operatorNames(self):
         """
-        Returns a list of operator names in the same order as the applyOperators
-        method
+        Required method for use with the Search class.
+        Returns a list of the operator names in the
+        same order as the applyOperators method.
         """
-        # names = []
-        # for operator in self.OPERATORS:
-        #     names.append('Move %d missionaries and %d cannibals from %s bank'
-        #                  % (operator[0], operator[1], self.farmer_position.name))
-        # return names
+        return ["moveGoat", "moveWolf", "moveGrain",
+            "moveWolfOrGoat", "moveWolfOrGrain"]
+
 
     def applyOperators(self):
         """
-        Returns a list of possible successors to the current state, some of
-        which maybe illegal
+        Required method for use with the Search class.
+        Returns a list of possible successors to the current
+        state, some of which may be illegal.
         """
-        # next_states = []
+        return [self.moveGoat(), self.moveWolf(), self.moveGrain(),
+            self.moveWolfOrGoat(), self.moveWolfOrGrain()]
 
-        # for operator in self.OPERATORS:
-        #     if self.farmer_position == self.FarmerPosition.LEFT:
-        #         next_states.append(Farmer(
-        #             self.num_missionaries - operator[0],
-        #             self.num_cannibals - operator[1],
-        #             self.FarmerPosition.RIGHT))
-        #     else:
-        #         next_states.append(Farmer(
-        #             self.num_missionaries + operator[0],
-        #             self.num_cannibals + operator[1],
-        #             self.FarmerPosition.LEFT))
-
-        # return next_states
-
-
-initialState = Farmer(Farmer.WolfPosition.POINTA,
-                        Farmer.GoatPosition.POINTA,
-                        Farmer.GrainPosition.POINTA,
-                        Farmer.FarmerPosition.POINTA)
-
-goalState = Farmer(Farmer.WolfPosition.POINTB,
-                        Farmer.GoatPosition.POINTB,    
-                        Farmer.GrainPosition.POINTB,
-                        Farmer.FarmerPosition.POINTB)
-
-Search(initialState, goalState)
+Search(FarmerState(1, 1, 1, 'A', 0, 0, 0), FarmerState(0, 0, 0, 'B', 1, 1, 1))

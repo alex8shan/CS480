@@ -1,20 +1,8 @@
+# Name: Shreeya Rupakheti - sr7172@truman.edu
 # Name: Minghao Shan - ms1723@truman.edu
-# Name: Shreeya Rupakheti  - ???????????????????@truman.edu
 
 # File eightPuzzle.py
-# Implements the Eight Puzzle problem for state space search
-
-#                Node Expansions
-# Problem | BFS   | A*(tiles) | A*(dist) | Steps
-#    A      7          3          3         2
-#    B      69         8          7         6
-#    C      183        18         9         8
-#    D      807        40         24        10
-#    E      831        40         24        10
-#    F      1557       95         18        12
-#    G      6005       269        46        15
-#    H      46690      3616       183       20
-
+# Implements the Eight Puzzle problem for state space search           
 
 from informedSearch import *
 
@@ -91,7 +79,10 @@ class EightPuzzleState(InformedProblemState):
         return next_states
 
     def heuristic(self, goal):
-        """Returns the estimated cost of reaching the goal from this state."""
+        """
+        For use with informed search. Returns the cost of reaching
+        the goal from this state
+        """
         # return 0
         # return self.get_hamming_distance(goal)
         return self.get_manhattan_distance(goal)
@@ -122,7 +113,7 @@ class EightPuzzleState(InformedProblemState):
         return manhattan_distance
 
     def find_position(self, value):
-        """Returns row and column number of the cell containing value"""
+        """Returns row and column number of the cell containing the value"""
         for row in range(len(self.grid)):
             for col in range(len(self.grid[row])):
                 if self.grid[row][col] == value:
@@ -136,11 +127,12 @@ goalState = EightPuzzleState(
      [7, 6, 5]])
 
 initialStateBoards = [
+     
     [[1, 3, 0],
      [8, 2, 4],
      [7, 6, 5]],
 
-    [[1, 3, 4],
+     [[1, 3, 4],
      [8, 6, 2],
      [0, 7, 5]],
 
@@ -169,4 +161,15 @@ initialStateBoards = [
      [8, 1, 2]]
 ]
 
-InformedSearch(EightPuzzleState(initialStateBoards[0]), goalState)
+InformedSearch(EightPuzzleState(initialStateBoards[3]), goalState)
+
+#            Node Expansions
+# Problem | BFS   | A*(tiles) | A*(dist) | Steps
+#    A      7          3          3         2
+#    B      69         8          7         6
+#    C      183        18         9         8
+#    D      807        40         24        10
+#    E      831        40         24        10
+#    F      1557       95         18        12
+#    G      6005       269        46        15
+#    H      46690      3616       183       20
